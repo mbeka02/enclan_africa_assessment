@@ -127,11 +127,15 @@ Three tables are needed:
 - `Email`
 - `Gender`
 - `DateOfBirth`
+
   **`Courses`**
+
 - `CourseID`
 - `CourseName`
 - `Description` (optional)
+
   **`Enrollments`**
+
 - `EnrollmentID`
 - `StudentID` (foreign key → `Students.StudentID`)
 - `CourseID` (foreign key → `Courses.CourseID`)
