@@ -7,7 +7,7 @@ This repository contains my answers to the assessment questions, along with the 
 | Path                                         | Description                                                                    |
 | -------------------------------------------- | ------------------------------------------------------------------------------ |
 | `README.md`                                  | This file — written answers to all four questions, plus setup/run instructions |
-| [`question_1/main.go`](./question_1/main.go) | Go program for Question 1 (dedupe + sort)                                      |
+| [`question_1/main.go`](./question_1/main.go) | Go program for Question 1 (deduplication + sorting in ascending order)         |
 | [`question_2/`](./question_2/)               | Django REST API for Question 2 (blog posts CRUD)                               |
 
 ---
@@ -77,14 +77,14 @@ The API is now available at `http://127.0.0.1:8000/api/`.
 
 ### Endpoints
 
-| Method   | URL                    | Description         | Auth required? |
-| -------- | ---------------------- | ------------------- | -------------- |
-| `POST`   | `/api/token/`          | Obtain auth token   | No (creds in body) |
-| `GET`    | `/api/posts/`          | List all posts      | No             |
-| `POST`   | `/api/posts/`          | Create a post       | Yes            |
-| `GET`    | `/api/posts/<id>/`     | Retrieve a post     | No             |
-| `PUT`    | `/api/posts/<id>/`     | Update a post       | Yes (author only) |
-| `DELETE` | `/api/posts/<id>/`     | Delete a post       | Yes (author only) |
+| Method   | URL                | Description       | Auth required?     |
+| -------- | ------------------ | ----------------- | ------------------ |
+| `POST`   | `/api/token/`      | Obtain auth token | No (creds in body) |
+| `GET`    | `/api/posts/`      | List all posts    | No                 |
+| `POST`   | `/api/posts/`      | Create a post     | Yes                |
+| `GET`    | `/api/posts/<id>/` | Retrieve a post   | No                 |
+| `PUT`    | `/api/posts/<id>/` | Update a post     | Yes (author only)  |
+| `DELETE` | `/api/posts/<id>/` | Delete a post     | Yes (author only)  |
 
 ### Expected Output
 
@@ -144,7 +144,7 @@ Three screens is intentionally minimal , a shop owner using this between custome
 
 **Today's Sales**
 
-- Total sales amount for today, shown prominently at the top
+- Total sales amount for today(displayed at the top)
 - Number of transactions today
 - A simple list of today's individual sales (product, quantity, amount, time), most recent first
 
@@ -159,7 +159,7 @@ Three screens is intentionally minimal , a shop owner using this between custome
 
 **How the app prevents/corrects it:**
 
-- Show a **confirmation screen or modal/popup** before finalizing a sale: "Sell 1 × Sugar 1kg for KES 150?" with clear Confirm/Cancel options — rather than completing the sale the instant a button is tapped. This catches accidental quantity changes or accidental taps before they're recorded.
+- Show a **confirmation screen or modal/popup** before finalizing a sale: "Sell 1 × Sugar 1kg for KES 150?" with clear Confirm/Cancel options , rather than completing the sale the instant a button is tapped. This catches accidental quantity changes or accidental taps before they're recorded.
 - Allow the owner to **edit or delete a sale** from the Today's Sales list (e.g. within the same day, or with a simple undo right after recording it), so an error that does slip through can be corrected without needing to contact support or leave the total permanently wrong.
 
 ---
@@ -172,9 +172,9 @@ Three screens is intentionally minimal , a shop owner using this between custome
 
 Three tables are needed:
 
-- `Students` — one row per student
-- `Courses` — one row per course
-- `Enrollments` — one row per student-course enrollment (the junction/join table connecting the two)
+- `Students`: one row per student
+- `Courses`: one row per course
+- `Enrollments`: one row per student-course enrollment (the junction/join table connecting the two)
 
 ### 2. Columns
 
@@ -208,15 +208,15 @@ Three tables are needed:
 
 ### 4. Connecting students to courses
 
-Since a student can enroll in many courses, and a course can have many students, this is a **many-to-many relationship**. A many-to-many relationship can't be represented with a simple foreign key on either the `Students` or `Courses` table — it requires a **junction (join) table**, `Enrollments`, that sits between them.
+Since a student can enroll in many courses, and a course can have many students, this is a **many-to-many relationship**. A many-to-many relationship can't be represented with a simple foreign key on either the `Students` or `Courses` table , it requires a **junction (join) table**, `Enrollments`, that sits between them.
 
 `Enrollments` holds:
 
-- `StudentID` — foreign key referencing `Students.StudentID`
-- `CourseID` — foreign key referencing `Courses.CourseID`
+- `StudentID`: foreign key referencing `Students.StudentID`
+- `CourseID`: foreign key referencing `Courses.CourseID`
   Each row in `Enrollments` represents one student's enrollment in one course. This lets a single student have multiple rows (one per course) and a single course have multiple rows (one per enrolled student), without duplicating student or course data.
 
-### SQL query — list all students enrolled in "Introduction to Programming"
+### SQL query : list all students enrolled in "Introduction to Programming"
 
 ```sql
 SELECT Students.FirstName, Students.LastName, Courses.CourseName
@@ -229,5 +229,5 @@ WHERE Courses.CourseName = 'Introduction to Programming';
 **My Reasoning:**
 
 - The query starts from `Enrollments` since that's the table that actually links students to courses.
-- It joins in `Students` and `Courses` to pull in the human-readable fields (name, course name) that aren't stored in `Enrollments` itself.
-- The `WHERE` clause filters on `Courses.CourseName` directly, rather than a hardcoded `CourseID`. Filtering by name is more robust and directly answers what was asked — it doesn't depend on already knowing the numeric ID assigned to "Introduction to Programming".
+- It joins `Students` and `Courses` to pull in the fields (name, course name) that aren't stored in `Enrollments` itself.
+- The `WHERE` clause filters by `Courses.CourseName`.
