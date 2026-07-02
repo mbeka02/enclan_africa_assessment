@@ -1,6 +1,6 @@
 # Assessment Submission
 
-This repository contains my answers to the assessment questions, along with the code for Question 1.
+This repository contains my answers to the assessment questions, along with the code for Questions 1 and 2.
 
 ## Contents
 
@@ -8,6 +8,7 @@ This repository contains my answers to the assessment questions, along with the 
 | -------------------------------------------- | ------------------------------------------------------------------------------ |
 | `README.md`                                  | This file — written answers to all four questions, plus setup/run instructions |
 | [`question_1/main.go`](./question_1/main.go) | Go program for Question 1 (dedupe + sort)                                      |
+| [`question_2/`](./question_2/)               | Django REST API for Question 2 (blog posts CRUD)                               |
 
 ---
 
@@ -51,7 +52,65 @@ go run main.go
 
 ## Question 2 — Django API Development
 
-_(space reserved — to be filled in)_
+A REST API for blog posts built with Django and Django REST Framework.
+
+**Approach:**
+
+- **Model:** A `Post` model with `title`, `content`, `author` (FK to `User`), `created_at`, and `updated_at` fields.
+- **Authentication:** Token-based — clients obtain a token via `POST /api/token/` and include it as `Authorization: Token <key>` on subsequent requests.
+- **Authorization:** Unauthenticated users can read (list/retrieve) posts. Creating a post requires authentication. Updating or deleting a post is restricted to its author via a custom `IsAuthorOrReadOnly` permission.
+- **Routing:** Uses DRF's `DefaultRouter` to auto-generate standard CRUD endpoints.
+
+### Setup & Run
+
+**Prerequisites:** Python 3.10+ and pip.
+
+```bash
+cd question_2
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py createsuperuser   # follow prompts to create a user
+python manage.py runserver
+```
+
+The API is now available at `http://127.0.0.1:8000/api/`.
+
+### Endpoints
+
+| Method   | URL                    | Description         | Auth required? |
+| -------- | ---------------------- | ------------------- | -------------- |
+| `POST`   | `/api/token/`          | Obtain auth token   | No (creds in body) |
+| `GET`    | `/api/posts/`          | List all posts      | No             |
+| `POST`   | `/api/posts/`          | Create a post       | Yes            |
+| `GET`    | `/api/posts/<id>/`     | Retrieve a post     | No             |
+| `PUT`    | `/api/posts/<id>/`     | Update a post       | Yes (author only) |
+| `DELETE` | `/api/posts/<id>/`     | Delete a post       | Yes (author only) |
+
+### Expected Output
+
+Obtain a token:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/token/ \
+  -d "username=admin&password=yourpassword"
+# {"token": "abc123..."}
+```
+
+Create a post:
+
+```bash
+curl -X POST http://127.0.0.1:8000/api/posts/ \
+  -H "Authorization: Token abc123..." \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Hello", "content": "First post!"}'
+# {"id": 1, "title": "Hello", "content": "First post!", "author": "admin", ...}
+```
+
+### Running Tests
+
+```bash
+python manage.py test posts -v 2
+```
 
 ---
 
